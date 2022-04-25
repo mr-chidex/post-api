@@ -1,7 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const { getData } = require("../controllers/posts");
+const {
+  getPosts,
+  addPost,
+  editPost,
+  deletePost,
+  getPost,
+} = require("../controllers/posts");
 
-router.route("/").get(getData);
+router.route("/").get(getPosts).post(addPost);
+router.route("/postId").get(getPost).put(editPost).delete(deletePost);
+
+router;
 
 module.exports = router;

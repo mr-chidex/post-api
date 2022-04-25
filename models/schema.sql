@@ -11,7 +11,7 @@ CREATE TABLE users
 CREATE TABLE posts
 (
   pid SERIAL PRIMARY KEY,
-  uid INT REFERENCES users(uid),
+  user_id INT REFERENCES users(uid),
   title VARCHAR(255),
   body VARCHAR,
   author VARCHAR REFERENCES users(username),

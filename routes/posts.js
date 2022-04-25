@@ -11,6 +11,4 @@ const {
 router.route("/").get(getPosts).post(addPost);
 router.route("/:postId").get(getPost).put(editPost).delete(deletePost);
 
-router;
-
 module.exports = router;

@@ -14,7 +14,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(posts);
+app.use("/api/v1/posts", posts);
 
 app.use("/", (req, res) => {
   res.json({ message: "express" });

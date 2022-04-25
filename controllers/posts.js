@@ -1,7 +1,12 @@
-exports.getData = async (req, res, next) => {
+const pool = require("../models/db");
+
+exports.getPosts = async (req, res, next) => {
   try {
-    throw new Error("gone bac");
-    res.json({ message: "hello world" });
+    const posts = await pool.query(
+      "SELECT * FROM posts ORDER BY date_created DESC"
+    );
+
+    res.json({ status: "success", posts: posts.rows });
   } catch (err) {
     next(err);
   }

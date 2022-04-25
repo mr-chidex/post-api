@@ -1,4 +1,5 @@
 const pool = require("../models/db");
+const commentValidate = require("../utils/commetn.validate");
 
 /**
  *
@@ -79,7 +80,14 @@ exports.getComment = async (req, res, next) => {
  */
 exports.addComment = async (req, res, next) => {
   try {
-    const { comment, username, uid, pid } = req.body;
+    const { error, value } = commentValidate(req.body);
+
+    if (error)
+      return res
+        .status(400)
+        .json({ status: "error", message: error.details[0].message });
+
+    const { comment, username, uid, pid } = value;
     const values = [comment, username, uid, pid];
 
     const newComment = await pool.query(
@@ -111,6 +119,20 @@ exports.editComment = async (req, res, next) => {
     const { comment, username, uid, pid } = req.body;
     const values = [comment, username, uid, pid, commentId];
 
+    const comments = await pool.query(
+      `
+      SELECT * FROM comments
+      WHERE cid = $1
+    `,
+      [commentId]
+    );
+
+    if (comments.rows.length <= 0)
+      return res.status(400).json({
+        status: "error",
+        message: "comment with id does not exist",
+      });
+
     const updatedComment = await pool.query(
       `
       UPDATE comments 
@@ -138,7 +160,21 @@ exports.deleteComment = async (req, res, next) => {
   try {
     const { commentId } = req.params;
 
-    const comment = await pool.query(
+    const comments = await pool.query(
+      `
+      SELECT * FROM comments
+      WHERE cid = $1
+    `,
+      [commentId]
+    );
+
+    if (comments.rows.length <= 0)
+      return res.status(400).json({
+        status: "error",
+        message: "comment with id does not exist",
+      });
+
+    await pool.query(
       `
       DELETE FROM comments 
       WHERE cid = $1
@@ -146,7 +182,7 @@ exports.deleteComment = async (req, res, next) => {
       [commentId]
     );
 
-    res.json({ status: "success", comment: comment.rows });
+    res.json({ status: "success", message: "comment successfully deleted" });
   } catch (error) {
     next(error);
   }
@@ -166,13 +202,30 @@ exports.deleteCommentsByPost = async (req, res, next) => {
 
     const comments = await pool.query(
       `
-      DELETE FROM comments 
-      WHERE cid = $1
+      SELECT * FROM comments
+      WHERE post_id = $1
     `,
       [postId]
     );
 
-    res.json({ status: "success", comments: comments.rows });
+    if (comments.rows.length <= 0)
+      return res.status(400).json({
+        status: "error",
+        message: "comments with post id does not exist",
+      });
+
+    await pool.query(
+      `
+      DELETE FROM comments 
+      WHERE post_id = $1
+    `,
+      [postId]
+    );
+
+    res.json({
+      status: "success",
+      message: "post comments successfully deleted",
+    });
   } catch (error) {
     next(error);
   }

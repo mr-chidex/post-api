@@ -9,7 +9,7 @@ const {
 } = require("../controllers/posts");
 
 router.route("/").get(getPosts).post(addPost);
-router.route("/postId").get(getPost).put(editPost).delete(deletePost);
+router.route("/:postId").get(getPost).put(editPost).delete(deletePost);
 
 router;
 

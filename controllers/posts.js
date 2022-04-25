@@ -1,5 +1,13 @@
 const pool = require("../models/db");
 
+/**
+ *
+ * @param {object} req
+ * @param {object} res
+ * @description - get all post
+ * @access Public
+ * @route GET /api/v1/posts
+ */
 exports.getPosts = async (req, res, next) => {
   try {
     const posts = await pool.query(
@@ -12,6 +20,14 @@ exports.getPosts = async (req, res, next) => {
   }
 };
 
+/**
+ *
+ * @param {object} req
+ * @param {object} res
+ * @description - get post
+ * @access Public
+ * @route GET /api/v1/posts/:postId
+ */
 exports.getPost = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -26,6 +42,14 @@ exports.getPost = async (req, res, next) => {
   }
 };
 
+/**
+ *
+ * @param {object} req
+ * @param {object} res
+ * @description - add a post
+ * @access Public
+ * @route POST /api/v1/posts
+ */
 exports.addPost = async (req, res, next) => {
   try {
     const { title, body, uid, username } = req.body;
@@ -33,8 +57,8 @@ exports.addPost = async (req, res, next) => {
 
     const post = await pool.query(
       `
-      INSERT INTO posts (user_id, title, body, author, NOW())
-      VALUES($1 $2, $3, $4)
+      INSERT INTO posts (user_id, title, body, author, date_created)
+      VALUES($1 $2, $3, $4, NOW())
     `,
       values
     );
@@ -45,6 +69,14 @@ exports.addPost = async (req, res, next) => {
   }
 };
 
+/**
+ *
+ * @param {object} req
+ * @param {object} res
+ * @description - edit a post
+ * @access Private
+ * @route PUT /api/v1/posts/:postId
+ */
 exports.editPost = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -67,6 +99,14 @@ exports.editPost = async (req, res, next) => {
   }
 };
 
+/**
+ *
+ * @param {object} req
+ * @param {object} res
+ * @description - delete a post
+ * @access Private
+ * @route DELETE /api/v1/posts/:postId
+ */
 exports.deletePost = async (req, res, next) => {
   try {
     const { postId } = req.params;

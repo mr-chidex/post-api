@@ -11,6 +11,7 @@ const pool = require("../models/db");
 exports.createNewUser = async (req, res, next) => {
   try {
     const { username, email, email_verification } = req.body;
+
     const values = [username, email, email_verification];
 
     const user = await pool.query(

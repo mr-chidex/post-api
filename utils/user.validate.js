@@ -1,6 +1,6 @@
 const joi = require("joi");
 
-const UserValidate = (user) => {
+const userValidate = (user) => {
   return joi
     .object({
       username: joi.string().trim().required(),
@@ -9,4 +9,4 @@ const UserValidate = (user) => {
     .validate(user);
 };
 
-export default UserValidate;
+module.exports = userValidate;

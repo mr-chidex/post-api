@@ -47,6 +47,33 @@ exports.getPost = async (req, res, next) => {
  *
  * @param {object} req
  * @param {object} res
+ * @description - search post
+ * @access Public
+ * @route GET /api/v1/posts/search?q=text
+ */
+exports.searchPost = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+
+    if (!q)
+      return res.status(422).json({ message: "invalid/no search parameter" });
+
+    const post = await pool.query(
+      `SELECT * FROM posts 
+       WHERE search_vector @@ to_tsquery($1)`,
+      [q]
+    );
+
+    res.json({ status: "success", post: post.rows });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ *
+ * @param {object} req
+ * @param {object} res
  * @description - add a post
  * @access Public
  * @route POST /api/v1/posts
@@ -61,12 +88,13 @@ exports.addPost = async (req, res, next) => {
         .json({ status: "error", message: error.details[0].message });
 
     const { title, body, uid, username } = value;
-    const values = [uid, title, body, username];
+    const search_vector = [title, body, username];
+    const values = [uid, title, body, search_vector, username];
 
     await pool.query(
       `
-      INSERT INTO posts (user_id, title, body, author, date_created)
-      VALUES($1 $2, $3, $4, NOW())
+      INSERT INTO posts (user_id, title, body, search_vector, author, date_created)
+      VALUES($1, $2, $3, to_tsvector($4), $5, NOW())
     `,
       values
     );

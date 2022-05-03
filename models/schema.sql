@@ -15,7 +15,9 @@ CREATE TABLE posts
   title VARCHAR(255),
   body VARCHAR,
   author VARCHAR REFERENCES users(username),
-  date_created TIMESTAMP
+  date_created TIMESTAMP,
+  likes INT DEFAULT 0,
+  search_vector TSVECTOR
 );
 
 CREATE TABLE comments

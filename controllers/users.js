@@ -146,7 +146,6 @@ exports.deleteUser = async (req, res, next) => {
         .status(400)
         .json({ status: "error", message: "user id not provided." });
 
-    //delete user
     const user = await pool.query(
       `
       SELECT * FROM users

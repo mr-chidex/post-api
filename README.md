@@ -1,4 +1,4 @@
-# BlogLike Api
+# Blog Post Api
 
 A simple REST API built with postgres
 
